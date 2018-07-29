@@ -55,6 +55,7 @@ type GinJWTMiddleware struct {
 
 	// User can define own Unauthorized func.
 	Unauthorized func(*gin.Context, int, string)
+	SendResponse func(*gin.Context, string, string)
 }
 
 // Login form structure.
@@ -182,10 +183,8 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token":  tokenString,
-		"expire": expire.Format(time.RFC3339),
-	})
+	mw.SendResponse(c, userId, tokenString)
+	return
 }
 
 // RefreshHandler can be used to refresh a token. The token still needs to be valid on refresh.
